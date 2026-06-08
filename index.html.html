@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AdExpert — Google & Meta Ads Specialist</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080810;
+    --bg2: #0e0e1a;
+    --bg3: #13131f;
+    --accent: #FF5C28;
+    --accent2: #4F8EF7;
+    --text: #f0f0f8;
+    --muted: #8888aa;
+    --border: rgba(255,255,255,0.07);
+    --card: rgba(255,255,255,0.04);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; overflow-x:hidden; }
+
+  /* NAV */
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(8,8,16,0.85); backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 2rem; height:64px;
+  }
+  .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; }
+  .logo span { color:var(--accent); }
+  .nav-links { display:flex; gap:2rem; }
+  .nav-links a {
+    color:var(--muted); text-decoration:none; font-size:0.9rem;
+    cursor:pointer; transition:color 0.2s;
+  }
+  .nav-links a:hover, .nav-links a.active { color:var(--text); }
+  .nav-cta {
+    background:var(--accent); color:#fff; border:none;
+    padding:0.5rem 1.2rem; border-radius:8px; font-family:'DM Sans',sans-serif;
+    font-size:0.85rem; font-weight:600; cursor:pointer; transition:opacity 0.2s;
+  }
+  .nav-cta:hover { opacity:0.85; }
+
+  /* PAGES */
+  .page { display:none; padding-top:64px; min-height:100vh; }
+  .page.active { display:block; }
+
+  /* HERO */
+  .hero {
+    min-height:calc(100vh - 64px);
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    text-align:center; padding:4rem 2rem;
+    position:relative; overflow:hidden;
+  }
+  .hero::before {
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(79,142,247,0.12) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 70%, rgba(255,92,40,0.08) 0%, transparent 60%);
+  }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:0.5rem;
+    background:rgba(79,142,247,0.1); border:1px solid rgba(79,142,247,0.25);
+    color:var(--accent2); padding:0.4rem 1rem; border-radius:100px;
+    font-size:0.8rem; font-weight:500; margin-bottom:2rem;
+    animation: fadeUp 0.6s ease;
+  }
+  .hero h1 {
+    font-family:'Syne',sans-serif; font-weight:800;
+    font-size:clamp(2rem,5vw,3.8rem); line-height:1.1;
+    max-width:800px; margin-bottom:1.5rem;
+    animation: fadeUp 0.7s ease;
+  }
+  .hero h1 em { color:var(--accent); font-style:normal; }
+  .hero p {
+    color:var(--muted); max-width:560px; line-height:1.7;
+    margin-bottom:2.5rem; font-size:1.05rem;
+    animation: fadeUp 0.8s ease;
+  }
+  .hero-btns { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; animation: fadeUp 0.9s ease; }
+  .btn-primary {
+    background:var(--accent); color:#fff; border:none;
+    padding:0.85rem 2rem; border-radius:10px; font-family:'DM Sans',sans-serif;
+    font-size:1rem; font-weight:600; cursor:pointer; transition:transform 0.2s, opacity 0.2s;
+  }
+  .btn-primary:hover { transform:translateY(-2px); opacity:0.9; }
+  .btn-secondary {
+    background:transparent; color:var(--text);
+    border:1px solid var(--border); padding:0.85rem 2rem;
+    border-radius:10px; font-family:'DM Sans',sans-serif;
+    font-size:1rem; font-weight:500; cursor:pointer; transition:border-color 0.2s;
+  }
+  .btn-secondary:hover { border-color:rgba(255,255,255,0.2); }
+
+  /* STATS */
+  .stats {
+    display:grid; grid-template-columns:repeat(4,1fr);
+    gap:1px; background:var(--border);
+    border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  }
+  .stat { background:var(--bg); padding:2rem; text-align:center; }
+  .stat-num { font-family:'Syne',sans-serif; font-size:2rem; font-weight:800; color:var(--accent); }
+  .stat-label { color:var(--muted); font-size:0.85rem; margin-top:0.3rem; }
+
+  /* SECTIONS */
+  .section { padding:5rem 2rem; max-width:1100px; margin:0 auto; }
+  .section-title {
+    font-family:'Syne',sans-serif; font-size:clamp(1.6rem,3vw,2.4rem);
+    font-weight:800; margin-bottom:1rem;
+  }
+  .section-sub { color:var(--muted); line-height:1.7; max-width:560px; margin-bottom:3rem; }
+
+  .problem-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; }
+  .problem-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:1.5rem;
+    display:flex; align-items:flex-start; gap:1rem;
+  }
+  .problem-icon { font-size:1.5rem; flex-shrink:0; }
+  .problem-card h4 { font-weight:600; margin-bottom:0.3rem; }
+  .problem-card p { color:var(--muted); font-size:0.9rem; line-height:1.6; }
+
+  /* SERVICES */
+  .services-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.5rem; }
+  .service-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:2rem; transition:border-color 0.3s;
+  }
+  .service-card:hover { border-color:rgba(255,92,40,0.3); }
+  .service-tag {
+    display:inline-block; font-size:0.75rem; font-weight:600;
+    padding:0.3rem 0.8rem; border-radius:100px; margin-bottom:1rem;
+    text-transform:uppercase; letter-spacing:0.05em;
+  }
+  .tag-google { background:rgba(79,142,247,0.15); color:var(--accent2); }
+  .tag-meta { background:rgba(255,92,40,0.15); color:var(--accent); }
+  .tag-combo { background:rgba(100,200,100,0.15); color:#6fc; }
+  .service-card h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.15rem; margin-bottom:0.8rem; }
+  .service-card p { color:var(--muted); font-size:0.9rem; line-height:1.6; margin-bottom:1rem; }
+  .service-includes { list-style:none; margin-bottom:1.5rem; }
+  .service-includes li { color:var(--muted); font-size:0.85rem; padding:0.2rem 0; }
+  .service-includes li::before { content:'✓ '; color:var(--accent); font-weight:700; }
+  .service-price { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; color:var(--accent); margin-bottom:1rem; }
+  .btn-sm {
+    background:transparent; border:1px solid var(--accent);
+    color:var(--accent); padding:0.5rem 1.2rem; border-radius:8px;
+    font-family:'DM Sans',sans-serif; font-size:0.85rem; font-weight:600;
+    cursor:pointer; transition:background 0.2s;
+  }
+  .btn-sm:hover { background:var(--accent); color:#fff; }
+
+  /* ABOUT */
+  .about-grid { display:grid; grid-template-columns:1fr 1.5fr; gap:4rem; align-items:start; }
+  .about-avatar {
+    width:100%; aspect-ratio:1; border-radius:20px;
+    background: linear-gradient(135deg, var(--bg3) 0%, var(--bg2) 100%);
+    border:1px solid var(--border);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    font-size:5rem; gap:1rem;
+  }
+  .about-name { font-family:'Syne',sans-serif; font-size:0.9rem; font-weight:600; color:var(--muted); }
+  .skill-group { margin-bottom:2rem; }
+  .skill-group h4 { font-family:'Syne',sans-serif; font-weight:700; margin-bottom:0.8rem; font-size:0.9rem; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); }
+  .skill-pills { display:flex; flex-wrap:wrap; gap:0.5rem; }
+  .pill {
+    background:var(--card); border:1px solid var(--border);
+    padding:0.3rem 0.8rem; border-radius:100px;
+    font-size:0.8rem; color:var(--muted);
+  }
+  .cert-list { list-style:none; }
+  .cert-list li { padding:0.5rem 0; border-bottom:1px solid var(--border); color:var(--muted); font-size:0.9rem; }
+  .cert-list li span { color:var(--accent); margin-right:0.5rem; }
+
+  /* CONTACT */
+  .contact-grid { display:grid; grid-template-columns:1fr 1.2fr; gap:4rem; }
+  .contact-info h3 { font-family:'Syne',sans-serif; font-size:1.4rem; font-weight:700; margin-bottom:1rem; }
+  .contact-info p { color:var(--muted); line-height:1.7; margin-bottom:2rem; }
+  .contact-detail { display:flex; align-items:center; gap:1rem; margin-bottom:1rem; }
+  .contact-detail .icon {
+    width:40px; height:40px; background:var(--card); border:1px solid var(--border);
+    border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+  }
+  .contact-detail p { color:var(--muted); font-size:0.9rem; margin:0; }
+  .contact-detail strong { color:var(--text); }
+
+  .form-group { margin-bottom:1.2rem; }
+  .form-group label { display:block; font-size:0.85rem; color:var(--muted); margin-bottom:0.5rem; font-weight:500; }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width:100%; background:var(--card); border:1px solid var(--border);
+    border-radius:10px; padding:0.75rem 1rem; color:var(--text);
+    font-family:'DM Sans',sans-serif; font-size:0.95rem;
+    transition:border-color 0.2s; outline:none;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color:var(--accent); }
+  .form-group textarea { resize:vertical; min-height:100px; }
+  select option { background:var(--bg3); }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .btn-submit {
+    width:100%; background:var(--accent); color:#fff; border:none;
+    padding:1rem; border-radius:10px; font-family:'Syne',sans-serif;
+    font-size:1rem; font-weight:700; cursor:pointer; transition:opacity 0.2s;
+    margin-top:0.5rem;
+  }
+  .btn-submit:hover { opacity:0.9; }
+
+  /* THANK YOU */
+  .thankyou-center {
+    display:flex; flex-direction:column; align-items:center;
+    justify-content:center; text-align:center;
+    min-height:calc(100vh - 64px); padding:2rem;
+  }
+  .thankyou-icon { font-size:4rem; margin-bottom:1.5rem; animation: bounce 1s ease; }
+  .thankyou-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin:3rem 0; max-width:800px; }
+  .step-card {
+    background:var(--card); border:1px solid var(--border);
+    border-radius:16px; padding:1.5rem 1rem; text-align:center;
+  }
+  .step-num { font-family:'Syne',sans-serif; font-size:1.5rem; font-weight:800; color:var(--accent); margin-bottom:0.5rem; }
+  .step-card p { color:var(--muted); font-size:0.8rem; line-height:1.5; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes bounce { 0%,100% { transform:scale(1); } 50% { transform:scale(1.2); } }
+
+  @media(max-width:768px) {
+    .stats { grid-template-columns:repeat(2,1fr); }
+    .problem-grid, .services-grid, .about-grid, .contact-grid, .thankyou-steps { grid-template-columns:1fr; }
+    .form-row { grid-template-columns:1fr; }
+    .nav-links { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAVIGATION ============ -->
+<nav>
+  <div class="logo">Ad<span>Expert</span></div>
+  <div class="nav-links">
+    <a onclick="showPage('home')" class="active" id="nav-home">Home</a>
+    <a onclick="showPage('services')" id="nav-services">Services</a>
+    <a onclick="showPage('about')" id="nav-about">About</a>
+    <a onclick="showPage('contact')" id="nav-contact">Contact</a>
+  </div>
+  <button class="nav-cta" onclick="showPage('contact')">Free Audit →</button>
+</nav>
+
+<!-- ============ HOME PAGE ============ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-badge">🎯 Google & Meta Ads Specialist</div>
+    <h1>Stop Wasting Money on Ads<br>That <em>Don't Convert</em></h1>
+    <p>I help small businesses and e-commerce brands get maximum ROI from every rupee spent on Google & Meta ads. No fluff. No guesswork. Just results.</p>
+    <div class="hero-btns">
+      <!-- GTM: Track this button click as a conversion -->
+      <button class="btn-primary" id="btn-free-audit" onclick="showPage('contact')">🎯 Get Free Ad Audit</button>
+      <button class="btn-secondary" onclick="showPage('services')">View Services →</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num">₹2Cr+</div><div class="stat-label">Ad Spend Managed</div></div>
+    <div class="stat"><div class="stat-num">60+</div><div class="stat-label">Clients Served</div></div>
+    <div class="stat"><div class="stat-num">4x</div><div class="stat-label">Average ROAS</div></div>
+    <div class="stat"><div class="stat-num">98%</div><div class="stat-label">Client Retention</div></div>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">Sound Familiar?</h2>
+    <p class="section-sub">Most businesses waste money on ads before fixing these core problems.</p>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-icon">❌</div>
+        <div><h4>Burning Budget</h4><p>Spending ₹20K/month with zero ROI and no clear explanation from your agency.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">❌</div>
+        <div><h4>Getting Clicks, No Leads</h4><p>Traffic is coming in but nobody is filling your form or calling you.</p></div>
+      </div>
+      <div class="problem-card">
+        <div class="problem-icon">❌</div>
+        <div><h4>Confusing Reports</h4><p>Your agency sends monthly reports but you don't understand what any of it means.</p></div>
+      </div>
+      <div class="problem-card" style="border-color:rgba(79,142,247,0.2);">
+        <div class="problem-icon">✅</div>
+        <div><h4>That's Exactly What I Fix</h4><p>Data-driven campaigns, weekly transparent reporting, and real results you can see.</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SERVICES PAGE ============ -->
+<div class="page" id="page-services">
+  <div class="section">
+    <h2 class="section-title">Google & Meta Ads Services</h2>
+    <p class="section-sub">Laser-focused ad management built around your business goals — not vanity metrics.</p>
+    <div class="services-grid">
+
+      <div class="service-card">
+        <span class="service-tag tag-google">Google Ads</span>
+        <h3>Google Search Ads</h3>
+        <p>Appear when people search for your product or service on Google and drive high-intent leads.</p>
+        <ul class="service-includes">
+          <li>Keyword Research & Competitor Analysis</li>
+          <li>Ad Copywriting (3-5 variations per group)</li>
+          <li>Smart Bidding Strategy Setup</li>
+          <li>Negative Keyword Management</li>
+          <li>Weekly Performance Review</li>
+        </ul>
+        <div class="service-price">From ₹8,000/month</div>
+        <button class="btn-sm" onclick="showPage('contact')">Get Started →</button>
+      </div>
+
+      <div class="service-card">
+        <span class="service-tag tag-google">Google Ads</span>
+        <h3>Performance Max (PMax)</h3>
+        <p>Reach customers across all Google channels — Search, YouTube, Gmail, and Display automatically.</p>
+        <ul class="service-includes">
+          <li>Asset Group Creation (headlines, images)</li>
+          <li>Audience Signal Setup</li>
+          <li>Product Feed Optimisation</li>
+          <li>Conversion Goal Configuration</li>
+          <li>Weekly Reporting Dashboard</li>
+        </ul>
+        <div class="service-price">From ₹10,000/month</div>
+        <button class="btn-sm" onclick="showPage('contact')">Get Started →</button>
+      </div>
+
+      <div class="service-card">
+        <span class="service-tag tag-meta">Meta Ads</span>
+        <h3>Meta Lead Generation Ads</h3>
+        <p>Get high-quality leads from Facebook & Instagram at the lowest cost per lead possible.</p>
+        <ul class="service-includes">
+          <li>Target Audience Research & Lookalikes</li>
+          <li>Instant Form Setup with Quality Filters</li>
+          <li>Retargeting Campaign Setup</li>
+          <li>CRM / Google Sheets Integration</li>
+          <li>Bi-weekly Optimisation</li>
+        </ul>
+        <div class="service-price">From ₹7,000/month</div>
+        <button class="btn-sm" onclick="showPage('contact')">Get Started →</button>
+      </div>
+
+      <div class="service-card">
+        <span class="service-tag tag-meta">Meta Ads</span>
+        <h3>Meta E-commerce Sales Ads</h3>
+        <p>Scale your Shopify or D2C brand with profitable Facebook & Instagram sales campaigns.</p>
+        <ul class="service-includes">
+          <li>Meta Pixel & Conversions API Setup</li>
+          <li>Dynamic Product Ads (Retargeting)</li>
+          <li>TOF → MOF → BOF Funnel Strategy</li>
+          <li>Creative Testing (UGC, carousel, video)</li>
+          <li>ROAS Optimisation</li>
+        </ul>
+        <div class="service-price">From ₹12,000/month</div>
+        <button class="btn-sm" onclick="showPage('contact')">Get Started →</button>
+      </div>
+
+      <div class="service-card">
+        <span class="service-tag tag-google">One-Time</span>
+        <h3>Conversion Tracking Setup</h3>
+        <p>Get 100% accurate conversion data before running or scaling your ads.</p>
+        <ul class="service-includes">
+          <li>Google Tag Manager (GTM) Setup</li>
+          <li>Google Ads Conversion Tracking</li>
+          <li>GA4 Event Tracking</li>
+          <li>Meta Pixel & Conversions API</li>
+          <li>Test & Verification Report</li>
+        </ul>
+        <div class="service-price">₹5,000 – ₹10,000 (one-time)</div>
+        <button class="btn-sm" onclick="showPage('contact')">Get Started →</button>
+      </div>
+
+      <div class="service-card" style="border-color:rgba(102,255,153,0.2);background:rgba(102,255,153,0.03);">
+        <span class="service-tag tag-combo">🔥 Best Value</span>
+        <h3>Monthly Combo Package</h3>
+        <p>Run both Google & Meta ads together with full tracking — the complete growth package.</p>
+        <ul class="service-includes">
+          <li>Google Search or PMax Campaign</li>
+          <li>Meta Lead Gen or Sales Campaign</li>
+          <li>Full Conversion Tracking Setup</li>
+          <li>Weekly Reporting Dashboard</li>
+          <li>Monthly Strategy Call (30 min)</li>
+        </ul>
+        <div class="service-price">From ₹18,000/month</div>
+        <button class="btn-sm" onclick="showPage('contact')" style="border-color:#6fc;color:#6fc;">Get Combo →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ ABOUT PAGE ============ -->
+<div class="page" id="page-about">
+  <div class="section">
+    <div class="about-grid">
+      <div>
+        <div class="about-avatar">
+          👨‍💻
+          <div class="about-name">Rahul Sharma</div>
+        </div>
+      </div>
+      <div>
+        <h2 class="section-title">Hi, I'm Rahul Sharma 👋</h2>
+        <p style="color:var(--muted);line-height:1.8;margin-bottom:2rem;">
+          Freelance Google & Meta Ads Manager based in Pune with 5+ years of experience. I've managed over ₹2 Crore in ad spend across Google and Meta for clients in real estate, e-commerce, education, and healthcare.
+          <br><br>
+          When you work with me, you talk directly to the person managing your ads — no account managers, no juniors, no middlemen. You always know exactly what's happening with your money.
+        </p>
+
+        <div class="skill-group">
+          <h4>Google Ads</h4>
+          <div class="skill-pills">
+            <span class="pill">Search Campaigns</span>
+            <span class="pill">Performance Max</span>
+            <span class="pill">Display & Remarketing</span>
+            <span class="pill">YouTube Ads</span>
+            <span class="pill">Google Shopping</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <h4>Meta Ads</h4>
+          <div class="skill-pills">
+            <span class="pill">Facebook & Instagram</span>
+            <span class="pill">Lead Generation</span>
+            <span class="pill">Dynamic Product Ads</span>
+            <span class="pill">Retargeting Funnels</span>
+            <span class="pill">Advantage+ Shopping</span>
+          </div>
+        </div>
+
+        <div class="skill-group">
+          <h4>Tracking & Analytics</h4>
+          <div class="skill-pills">
+            <span class="pill">Google Tag Manager</span>
+            <span class="pill">GA4</span>
+            <span class="pill">Meta Pixel</span>
+            <span class="pill">Conversions API</span>
+            <span class="pill">Looker Studio</span>
+          </div>
+        </div>
+
+        <ul class="cert-list">
+          <li><span>🏅</span> Google Ads Search Certified</li>
+          <li><span>🏅</span> Google Ads Display Certified</li>
+          <li><span>🏅</span> Google Analytics 4 Certified</li>
+          <li><span>🏅</span> Meta Media Buying Professional</li>
+          <li><span>🏅</span> Meta Creative Strategy Certified</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CONTACT PAGE ============ -->
+<div class="page" id="page-contact">
+  <div class="section">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Get Your Free Ad Account Audit</h3>
+        <p>I'll personally review your ad account and send you a screen-recorded video showing exactly what's wasting your money — completely FREE, no strings attached.</p>
+
+        <div class="contact-detail">
+          <div class="icon">📧</div>
+          <div><strong>Email</strong><p>rahul@adexpert.in</p></div>
+        </div>
+        <div class="contact-detail">
+          <div class="icon">📱</div>
+          <div><strong>WhatsApp</strong><p>+91 98765 43210</p></div>
+        </div>
+        <div class="contact-detail">
+          <div class="icon">📍</div>
+          <div><strong>Location</strong><p>Pune, Maharashtra, India</p></div>
+        </div>
+        <div class="contact-detail">
+          <div class="icon">⏰</div>
+          <div><strong>Response Time</strong><p>Within 24 hours</p></div>
+        </div>
+
+        <br>
+        <p style="color:var(--muted);font-size:0.85rem;">🔒 Your information is 100% confidential.<br>No spam. No pressure to hire me.</p>
+      </div>
+
+      <div>
+        <!-- GTM: This form submit → Thank You page is your MAIN CONVERSION -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="name" placeholder="Rahul Sharma">
+          </div>
+          <div class="form-group">
+            <label>Email Address *</label>
+            <input type="email" id="email" placeholder="rahul@example.com">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>WhatsApp Number *</label>
+            <input type="tel" id="phone" placeholder="+91 98765 43210">
+          </div>
+          <div class="form-group">
+            <label>Business Website</label>
+            <input type="url" id="website" placeholder="www.yourbusiness.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Which platforms are you advertising on?</label>
+          <select id="platform">
+            <option value="">Select platform...</option>
+            <option>Google Ads</option>
+            <option>Meta Ads (Facebook/Instagram)</option>
+            <option>Both Google & Meta</option>
+            <option>Not running ads yet — want to start</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Monthly Ad Budget</label>
+          <select id="budget">
+            <option value="">Select budget range...</option>
+            <option>Under ₹10,000</option>
+            <option>₹10,000 – ₹25,000</option>
+            <option>₹25,000 – ₹50,000</option>
+            <option>₹50,000 – ₹1,00,000</option>
+            <option>Above ₹1,00,000</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>What's your biggest challenge with ads?</label>
+          <textarea id="message" placeholder="Tell me about your current situation and what results you're looking for..."></textarea>
+        </div>
+        <!-- GTM: Track this button click AND the Thank You page load -->
+        <button class="btn-submit" id="btn-submit" onclick="submitForm()">🎯 Get My Free Audit →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ THANK YOU PAGE ============ -->
+<!-- GTM Tip: Fire your conversion tag when this page loads -->
+<div class="page" id="page-thankyou">
+  <div class="thankyou-center">
+    <div class="thankyou-icon">🎉</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;margin-bottom:1rem;">Thank You! Your Audit is on its Way.</h2>
+    <p style="color:var(--muted);max-width:500px;line-height:1.7;">Your request has been received. I'll personally audit your ad account and send you a detailed video breakdown within 48 hours.</p>
+
+    <div class="thankyou-steps">
+      <div class="step-card">
+        <div class="step-num">1️⃣</div>
+        <p>I'll review your form answers today</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2️⃣</div>
+        <p>Audit your ad account within 48 hours</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3️⃣</div>
+        <p>Send personalised video audit (10-15 min)</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4️⃣</div>
+        <p>Free 20-min call to discuss your growth plan</p>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);">48 hrs</div>
+        <div style="color:var(--muted);font-size:0.8rem;">Audit Delivery</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);">FREE</div>
+        <div style="color:var(--muted);font-size:0.8rem;">No Cost</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem 1.5rem;text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);">0</div>
+        <div style="color:var(--muted);font-size:0.8rem;">Obligation</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="showPage('home')">← Back to Home</button>
+  </div>
+</div>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+  // Page navigation function
+  function showPage(id) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    // Remove active from all nav links
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    // Show selected page
+    document.getElementById('page-' + id).classList.add('active');
+    // Set active nav link
+    const navEl = document.getElementById('nav-' + id);
+    if (navEl) navEl.classList.add('active');
+    // Scroll to top
+    window.scrollTo(0, 0);
+    // Update URL hash (important for GTM page view tracking!)
+    window.location.hash = id;
+  }
+
+  // Form submission
+  function submitForm() {
+    const name = document.getElementById('name').value;
+    if (!name.trim()) {
+      alert('Please enter your name');
+      return;
+    }
+    // In real site: submit to backend or Google Sheets
+    // Here: navigate to Thank You page (GTM fires conversion tag here)
+    showPage('thankyou');
+  }
+
+  // Load page from URL hash on start
+  window.addEventListener('load', function() {
+    const hash = window.location.hash.replace('#', '');
+    if (hash) showPage(hash);
+  });
+
+  /*
+  ================================================
+  GTM TRACKING GUIDE — How to set up in GTM:
+  ================================================
+
+  1. MAIN CONVERSION — Form Submission:
+     Trigger: Page View → URL contains "thankyou"
+     Tag: Google Ads Conversion (paste your Conversion ID + Label)
+
+  2. BUTTON CLICK — "Get Free Audit" Hero Button:
+     Trigger: Click → Element ID equals "btn-free-audit"
+     Tag: Google Ads Conversion or GA4 Event
+
+  3. PAGE VIEW — Services Page:
+     Trigger: Page View → URL contains "services"
+     Tag: GA4 Event (event_name: services_page_view)
+
+  4. FORM SUBMIT BUTTON:
+     Trigger: Click → Element ID equals "btn-submit"
+     Tag: GA4 Event (event_name: form_submit_click)
+
+  ================================================
+  */
+</script>
+
+</body>
+</html>
